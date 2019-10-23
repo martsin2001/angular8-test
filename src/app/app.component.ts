@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Subject, timer, fromEvent } from 'rxjs';
+import { Subject, timer, fromEvent, BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppService } from './app.service';
 
@@ -11,6 +11,7 @@ import { AppService } from './app.service';
 export class AppComponent implements OnInit {
   private userInfo = { online: false, loggedIn: false };
   private stopPolling$: Subject<boolean> = new Subject();
+  private myNumber$: BehaviorSubject<number[]> = new BehaviorSubject([]);
   private userLoggedIn = false;
 
   constructor(private appService: AppService) {}
@@ -20,11 +21,25 @@ export class AppComponent implements OnInit {
   }
 
   private initApp() {
+    this.addNewNumber();
     this.isUserOnline();
     this.startPolling();
     this.setUserStatus();
     this.isUserLoggedIn();
+    this.showNumbersList();
     this.setLoggedInStatus();
+  }
+
+  private addNewNumber() {
+    this.appService.getNumber().subscribe((n: number) => {
+      this.myNumber$.next([...this.myNumber$.value, n]);
+    });
+  }
+
+  private showNumbersList() {
+    timer(0, 2000).subscribe(() => {
+      console.log(this.myNumber$.getValue());
+    });
   }
 
   private setUserStatus() {
