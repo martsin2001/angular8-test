@@ -8,8 +8,16 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatButtonModule,
-  MatListModule
+  MatListModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSelectModule
 } from '@angular/material';
+import { EffectsModule } from '@ngrx/effects';
+import { ConversationEffects } from './redux/conversation.effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ConversationReducer } from './redux/conversation.reducer';
 
 @NgModule({
   declarations: [AppComponent, SearchMessengesComponent],
@@ -19,7 +27,14 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatListModule
+    MatListModule,
+    MatIconModule,
+    MatMenuModule,
+    MatSelectModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([ConversationEffects]),
+    StoreModule.forFeature('app-state', ConversationReducer),
+    StoreDevtoolsModule.instrument()
   ],
   providers: [],
   bootstrap: [AppComponent]

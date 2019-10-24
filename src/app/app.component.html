@@ -1,1 +1,24 @@
-<app-search-messenges></app-search-messenges>
+<div
+  class="app-container"
+  [ngClass]="{ black: themeColor === 'black', white: themeColor === 'white' }"
+>
+  <app-search-messenges [themeColor]="themeColor"></app-search-messenges>
+
+  <div class="change-theme">
+    <button
+      mat-mini-fab
+      [matMenuTriggerFor]="menu"
+      [color]="themeColor === 'white' ? 'primary' : 'accent'"
+    >
+      <mat-icon>invert_colors</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="changeTheme('white')">
+        <div class="color-white"></div>
+      </button>
+      <button mat-menu-item (click)="changeTheme('black')">
+        <div class="color-black"></div>
+      </button>
+    </mat-menu>
+  </div>
+</div>

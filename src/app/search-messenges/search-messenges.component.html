@@ -1,13 +1,31 @@
 <div class="search-container">
   <mat-form-field>
+    <mat-label>Favorite food</mat-label>
+    <mat-select [value]="consversations[0].id">
+      <mat-option
+        *ngFor="let data of consversations"
+        [value]="data.id"
+        (click)="changeConvarsation(data.id)"
+      >
+        {{ data.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field [color]="themeColor === 'white' ? 'primary' : 'accent'">
     <input #input matInput placeholder="Write message.." autocomplete="off" />
   </mat-form-field>
 </div>
 <div class="mapping-found-messages">
   <mat-list>
-    <ng-container *ngFor="let item of foundMessages$ | async">
+    <ng-container
+      *ngFor="
+        let item of foundMessages$ | async as foundMessages;
+        let last = last
+      "
+    >
       <mat-list-item>{{ item.message }}</mat-list-item>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="!last"></mat-divider>
     </ng-container>
   </mat-list>
 </div>

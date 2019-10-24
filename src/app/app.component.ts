@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Subject, timer, fromEvent, BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppService } from './app.service';
+import { ConversationFacade } from './redux/conversation.facade';
+
+enum ThemeColor {
+  white = 'white',
+  black = 'black'
+}
 
 @Component({
   selector: 'app-root',
@@ -9,15 +15,25 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  themeColor: ThemeColor = ThemeColor.white;
+
   private userInfo = { online: false, loggedIn: false };
   private stopPolling$: Subject<boolean> = new Subject();
   private myNumber$: BehaviorSubject<number[]> = new BehaviorSubject([]);
   private userLoggedIn = false;
 
-  constructor(private appService: AppService) {}
+  constructor(
+    private appService: AppService,
+    private conversationFacade: ConversationFacade
+  ) {}
 
   ngOnInit() {
     this.initApp();
+    this.conversationFacade.loadConverastionById(1);
+  }
+
+  changeTheme(color: ThemeColor) {
+    this.themeColor = color;
   }
 
   private initApp() {

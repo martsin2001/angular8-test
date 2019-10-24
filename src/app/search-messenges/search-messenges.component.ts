@@ -1,8 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { AppService } from '../app.service';
-import { Observable, fromEvent } from 'rxjs';
+import { Observable, fromEvent, of } from 'rxjs';
 import { Message } from '../core/message.interface';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  map
+} from 'rxjs/operators';
+import { ConversationFacade } from '../redux/conversation.facade';
 
 @Component({
   selector: 'app-search-messenges',
@@ -10,14 +16,30 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
   styleUrls: ['./search-messenges.component.scss']
 })
 export class SearchMessengesComponent implements OnInit {
+  @Input() themeColor: string;
+
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
   foundMessages$: Observable<Message[]>;
+  consversations: { id: number; name: string }[];
 
-  constructor(private appService: AppService) {}
+  constructor(
+    private appService: AppService,
+    private conversationFacade: ConversationFacade
+  ) {}
 
   ngOnInit() {
     this.subscribeToInput();
+    this.loadConversations();
+    this.searchMessages('');
+  }
+
+  changeConvarsation(id: number) {
+    this.conversationFacade.loadConverastionById(id);
+  }
+
+  private loadConversations() {
+    this.consversations = this.appService.loadConversationData();
   }
 
   private subscribeToInput() {
@@ -30,10 +52,20 @@ export class SearchMessengesComponent implements OnInit {
       )
       .subscribe((value: string) => {
         if (!!value) {
-          this.foundMessages$ = this.appService.searchMessages(value);
+          this.foundMessages$ = this.searchMessages(value);
         } else {
           this.foundMessages$ = null;
         }
       });
+  }
+
+  private searchMessages(keyword): Observable<Message[]> {
+    return this.conversationFacade.conversation$.pipe(
+      map(conv => {
+        return conv.messages.filter((item: Message) =>
+          item.message.toLowerCase().includes(keyword.toLowerCase())
+        );
+      })
+    );
   }
 }

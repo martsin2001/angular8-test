@@ -1,11 +1,13 @@
 .search-container {
-  margin: 40px 40px 0px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px 0px;
   mat-form-field {
     width: 300px;
   }
 }
 
 .mapping-found-messages {
-  margin: 0px 40px 40px;
+  padding: 0px 40px 40px;
   width: 300px;
 }
